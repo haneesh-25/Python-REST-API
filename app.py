@@ -1,32 +1,20 @@
 from flask import Flask, jsonify, request 
-from flask_restful import Resource, Api 
+import json
 
 app = Flask(__name__) 
-api = Api(app) 
 
-class Hello(Resource): 
+with open('resume.json', 'r') as file:
+    resume_data = json.load(file)
 
-	def get(self): 
+@app.route('/', methods = ['GET', 'POST']) 
+def home(): 
+    if request.method == 'GET': 
+        return jsonify(resume_data) 
 
-		return jsonify({'message': 'hello world'}) 
+@app.route('/home/<int:num>', methods = ['GET']) 
+def disp(num): 
+    return jsonify({'data': num**2}) 
 
-	def post(self): 
-		
-		data = request.get_json()	 
-		return jsonify({'data': data}), 201
-
-
-class Square(Resource): 
-
-	def get(self, num): 
-
-		return jsonify({'square': num**2}) 
-
-
-api.add_resource(Hello, '/') 
-api.add_resource(Square, '/square/<int:num>') 
-
-
+# driver function 
 if __name__ == '__main__': 
-
-	app.run(host='0.0.0.0', debug = True) 
+    app.run(host='0.0.0.0', debug = True)
